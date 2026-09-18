@@ -2,6 +2,7 @@ groups:
 
 - name: EmbeddedExporter
 
+  
   rules:
 
     - alert: MeilisearchIndexIsEmpty
@@ -11,8 +12,9 @@ groups:
         severity: warning
       annotations:
         summary: Meilisearch index is empty (instance {{ $labels.instance }})
-        description: "Meilisearch instance is down\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
+        description: "Meilisearch index {{ $labels.index }} has zero documents\n  VALUE = {{ $value }}\n  LABELS = {{ $labels }}"
 
+    # 0.5s threshold is a rough default; normal response time depends on your query complexity and dataset size — adjust based on your baseline.
     - alert: MeilisearchHttpResponseTime
       expr: 'meilisearch_http_response_time_seconds > 0.5'
       for: 0m

@@ -1,6 +1,14 @@
 name: Promtool check
 
-on: [pull_request, push]
+on:
+  pull_request:
+    paths:
+      - _data/**
+  push:
+    branches:
+      - master
+    paths:
+      - _data/**
 
 jobs:
   promtool-check:
@@ -8,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Set up Ruby
         uses: ruby/setup-ruby@v1
@@ -16,14 +24,13 @@ jobs:
           ruby-version: 3.4
 
       - name: Set up yq
-        uses: mikefarah/yq@master
+        uses: mikefarah/yq@v4
 
       - name: Install liquid
         run: gem install liquid-cli
 
       - name: Build rule configuration
         run: |
-          gem install liquid-cli
           cat _data/rules.yml | yq -I 0 -o json > _data/rules.json
 
           for service in $(cat _data/rules.json | jq -r '.groups[].services[] | @base64'); do
